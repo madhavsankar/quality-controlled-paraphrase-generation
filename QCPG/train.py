@@ -196,11 +196,11 @@ def main():
 
     model_args, dataset_args, data_args, training_args = parse_args()
 
-    if training_args.run_name:
-        import clearml
-        task = clearml.Task.init(project_name="tslm/tslm-gen", task_name=f"{training_args.run_name}", tags=[tag for tag in data_args.run_tags.replace(' ', '').split(',') if tag])    
-        task.set_resource_monitor_iteration_timeout(0)
-        parse_args()
+    # if training_args.run_name:
+    #     import clearml
+    #     task = clearml.Task.init(project_name="tslm/tslm-gen", task_name=f"{training_args.run_name}", tags=[tag for tag in data_args.run_tags.replace(' ', '').split(',') if tag])    
+    #     task.set_resource_monitor_iteration_timeout(0)
+    #     parse_args()
 
     if data_args.source_prefix is None and model_args.model_name_or_path in [
         "t5-small",

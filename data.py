@@ -193,6 +193,7 @@ def prepare_dataset(dataset_args, logger=None):
             logger.info(f"Dataset was filtered by '{dataset_args.dataset_filter}'")
 
     if dataset_args.dataset_map:
+        print(dataset_args.dataset_map)
         datasets = datasets.map(
             lambda x: eval(f"""locals() if not exec('{dataset_args.dataset_map}') else None""", None, x),
             keep_in_memory=dataset_args.dataset_keep_in_memory, 

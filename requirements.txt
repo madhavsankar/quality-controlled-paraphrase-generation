@@ -1,6 +1,6 @@
 datasets==1.7.0
 transformers==4.6.1
-tensorboard==2.5.0
+tensorboard>=2.5.0
 sacrebleu==1.5.1
 Levenshtein==0.18.1
 benepar==0.2.0

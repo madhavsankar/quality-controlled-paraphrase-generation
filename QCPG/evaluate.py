@@ -43,6 +43,8 @@ def main():
     dataset = prepare_dataset(dataset_args)
     column_names = dataset.column_names
 
+    #dataset = dataset[:10]
+
     predictions = dataset[column_names[1]] if eval_args.predictions_column is None \
                   else dataset[eval_args.predictions_column]
     references = dataset[column_names[0]] if eval_args.references_column is None \

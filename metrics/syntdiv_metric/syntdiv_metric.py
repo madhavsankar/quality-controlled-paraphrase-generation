@@ -146,7 +146,7 @@ class CrossMetric(datasets.Metric):
             refs =  list(map(get_tree_string, refs))
         
         scores = list(tqdm(map(dist, zip(preds, refs)), total=len(preds), desc="syntdiv:calc_dist"))
-
+        
         return {
             "scores": scores,
         }
