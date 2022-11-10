@@ -205,7 +205,7 @@ class MorphMetric(datasets.Metric):
 
         return z
 
-    def find_similarity(self, pair):
+    def find_diversity(self, pair):
         query = pair[0]
         corpus = pair[1]
 
@@ -221,7 +221,7 @@ class MorphMetric(datasets.Metric):
         # get similarity vector z
         z = self.calculate_similarity_vector(q_feats, c_feats)
 
-        return z[0]
+        return (1 - z[0])
 
     def _compute(self, predictions, references, batch_size=64, device=None):
         """Returns the scores"""
@@ -236,7 +236,7 @@ class MorphMetric(datasets.Metric):
         # preds = torch.cat(preds_embeds)
         # refs = torch.cat(refs_embeds)
 
-        scores = list(tqdm(map(self.find_similarity, zip(predictions, references)), total=len(references), desc="morphmetric:find_sim"))
+        scores = list(tqdm(map(self.find_diversity, zip(predictions, references)), total=len(references), desc="morphmetric:find_sim"))
 
         return {
             "scores": scores,
