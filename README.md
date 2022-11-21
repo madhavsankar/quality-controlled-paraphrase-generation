@@ -1,9 +1,7 @@
-# Quality Controlled Paraphrase Generation II
+# Quality Controlled Paraphrase Generation ++
 > Paraphrase generation has been widely used in various downstream tasks. Most tasks benefit mainly from high quality paraphrases, namely those that are semantically similar to, yet linguistically diverse from, the original sentence. Generating high-quality paraphrases is challenging as it becomes increasingly hard to preserve meaning as linguistic diversity increases. Recent works achieve nice results by controlling specific aspects of the paraphrase, such as its syntactic tree. However, they do not allow to directly control the quality of the generated paraphrase, and suffer from low flexibility and scalability. 
 
-<img src="/assets/images/ilus.jpg" width="40%"> 
-
-> Here we propose `QCPG++`, a quality-guided controlled paraphrase generation model that builds on top of [QCPG](https://github.com/IBM/quality-controlled-paraphrase-generation), that allows directly controlling the quality dimensions. We add more dimensions to the original model. Now we can control the morphological, phonological and syntactic diversity of the paraphrase while maximizing semantic similarity.
+> Here we propose `QCPG++`, a quality-guided controlled paraphrase generation model that builds on top of [`QCPG`](https://github.com/IBM/quality-controlled-paraphrase-generation), that allows directly controlling the quality dimensions. We add more dimensions to the original model. Now we can control the morphological, phonological and syntactic diversity of the paraphrase while maximizing semantic similarity.
 
 ## Usage
 Use run notebook or run shell script to train the model on mscoco dataset.
@@ -39,6 +37,7 @@ python QCPG/evaluate.py \
 ```
 
 ### Inference
+```python
 !python QCPG/predict.py \
 --per_device_eval_batch_size 256 --per_device_train_batch_size 256 \
 --source_column reference --target_column prediction \
@@ -48,6 +47,7 @@ python QCPG/evaluate.py \
 --dataset_split train \
 --model_name_or_path new_data/t5-base-cond-mscoco-bleurt-lr1e-3-v1 \
 --output_dir new_data/validation/t5-base-cond-mscoco-bleurt-lr1e-3-v1
+```
     
 ## Citation
 ```
