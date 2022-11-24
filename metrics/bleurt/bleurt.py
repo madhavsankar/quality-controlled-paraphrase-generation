@@ -91,7 +91,7 @@ class BLEURT(datasets.Metric):
             self.set_device(device)
 
         scores = []
-        for preds, refs in tqdm(zip(to_batches(predictions, batch_size), to_batches(references, batch_size)), total=int(ceil(min(len(predictions),len(references)) / batch_size)), desc="bleurt", disable=True):
+        for preds, refs in tqdm(zip(to_batches(predictions, batch_size), to_batches(references, batch_size)), total=int(ceil(min(len(predictions),len(references)) / batch_size)), desc="bleurt", disable=False):
 
             inputs = self.tokenizer(preds, refs, return_tensors='pt', padding='longest')
             inputs = {

@@ -140,9 +140,9 @@ class CrossMetric(datasets.Metric):
     def _compute(self, predictions, references, batch_size=64, workers=16):
         """Returns the scores"""
         with self.nlp.select_pipes(enable=["parser", "benepar"]):
-            preds = list(tqdm(self.nlp.pipe(predictions, batch_size=batch_size), total=len(predictions), desc="syntdiv:parse_preds", disable=True))
+            preds = list(tqdm(self.nlp.pipe(predictions, batch_size=batch_size), total=len(predictions), desc="syntdiv:parse_preds", disable=False))
             preds = list(map(get_tree_string, preds))
-            refs = list(tqdm(self.nlp.pipe(references, batch_size=batch_size), total=len(references), desc="syntdiv:parse_refs", disable=True))
+            refs = list(tqdm(self.nlp.pipe(references, batch_size=batch_size), total=len(references), desc="syntdiv:parse_refs", disable=False))
             refs =  list(map(get_tree_string, refs))
         
         scores = list(tqdm(map(dist, zip(preds, refs)), total=len(preds), desc="syntdiv:calc_dist"))
