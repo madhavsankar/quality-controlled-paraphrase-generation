@@ -70,9 +70,7 @@ class ModelBasedMetric(datasets.Metric):
         )
 
     def _download_and_prepare(self, dl_manager):
-        self.bertscore = load_metric("bertscore", experiment_id=self.experiment_id)
         self.bleu = load_metric("sacrebleu", experiment_id=self.experiment_id)
-        self.sbert = load_metric("metrics/cross_metric", experiment_id=self.experiment_id)
         self.syntdiv = load_metric("metrics/syntdiv_metric", experiment_id=self.experiment_id)
         self.bleurt = load_metric("metrics/bleurt", experiment_id=self.experiment_id)
         self.phon = load_metric("metrics/phon_metric", experiment_id=self.experiment_id)
@@ -93,8 +91,6 @@ class ModelBasedMetric(datasets.Metric):
             diversity_scores.append(diversity_score)
         bleu_scores = [self.bleu.compute(predictions=[pred], references=[[ref]])['score'] for pred, ref in tqdm(zip(predictions, references), total=total, desc="bleu")]
         bleurt_score = self.bleurt.compute(predictions=predictions, references=references)['scores']
-        # bertscore_score = self.bertscore.compute(predictions=predictions, references=references, lang='en')["f1"]
-        # semantic_scores = self.sbert.compute(predictions=predictions, references=references)["scores"]
         syntactic_diversity = self.syntdiv.compute(predictions=predictions, references=references)["scores"]
         phonological_diversity = self.phon.compute(predictions=predictions, references=references)["scores"]
         morphological_diversity = self.morph.compute(predictions=predictions, references=references)["scores"]
@@ -111,6 +107,4 @@ class ModelBasedMetric(datasets.Metric):
             "bleurt_score": bleurt_score,
             "phon_diversity": phonological_diversity,
             "morph_diversity": morphological_diversity
-            # "bertscore_score": bertscore_score,
-            # "semantic_score": semantic_scores
         }
