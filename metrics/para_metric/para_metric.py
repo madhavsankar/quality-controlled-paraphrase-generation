@@ -75,6 +75,8 @@ class ModelBasedMetric(datasets.Metric):
         self.bleurt = load_metric("metrics/bleurt", experiment_id=self.experiment_id)
         self.phon = load_metric("metrics/phon_metric", experiment_id=self.experiment_id)
         self.morph = load_metric("metrics/morph_metric", experiment_id=self.experiment_id)
+        self.sem = load_metric("metrics/sem_metric", experiment_id=self.experiment_id)
+        self.syndep = load_metric("metrics/syndep_metric", experiment_id=self.experiment_id)
     
     def _compute(self, predictions, references, batch_size=100):
         """Returns the scores"""
@@ -94,7 +96,8 @@ class ModelBasedMetric(datasets.Metric):
         syntactic_diversity = self.syntdiv.compute(predictions=predictions, references=references)["scores"]
         phonological_diversity = self.phon.compute(predictions=predictions, references=references)["scores"]
         morphological_diversity = self.morph.compute(predictions=predictions, references=references)["scores"]
-        
+        semantic_similarity = self.sem.compute(predictions=predictions, references=references)["scores"]
+        syntactic_dep_diversity = self.syndep.compute(predictions=predictions, references=references)["scores"]
 
         diversity_scores = [(lex + syn + ph + mo) / 4 for syn, lex, ph, mo in zip(syntactic_diversity, set_diversities, phonological_diversity, morphological_diversity)]
 
@@ -106,5 +109,7 @@ class ModelBasedMetric(datasets.Metric):
             "bleu_score": bleu_scores,
             "bleurt_score": bleurt_score,
             "phon_diversity": phonological_diversity,
-            "morph_diversity": morphological_diversity
+            "morph_diversity": morphological_diversity,
+            "semantic_similarity": semantic_similarity,
+            "syn_dep_diversity": syntactic_dep_diversity,
         }

@@ -7,3 +7,12 @@ benepar==0.2.0
 apted==1.0.3
 bert_score==0.3.11
 sentencepiece==0.1.96
+biopython
+cadences
+scikit-learn
+scipy
+spacy
+torch
+sentence_transformers
+amrlib
+clearml
