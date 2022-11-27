@@ -16,3 +16,5 @@ torch
 sentence_transformers
 amrlib
 clearml
+karateclub
+zss
