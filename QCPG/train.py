@@ -44,7 +44,7 @@ from transformers.file_utils import is_offline_mode
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 from transformers.utils import check_min_version
 import json
-
+import torch
 from data import DatasetArguments, prepare_dataset
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
@@ -85,6 +85,10 @@ class ModelArguments:
             "help": "Will use the token generated when running `transformers-cli login` (necessary to use this script "
             "with private models)."
         },
+    )
+    use_gpu: bool = field(
+        default=True, 
+        metadata={"help": "Use GPU if enabled."}
     )
 
 
@@ -252,7 +256,6 @@ def main():
 
     datasets = prepare_dataset(dataset_args, logger)
 
-    
     conditions_columns = data_args.conditions_columns
     if conditions_columns is not None:
         conditions_columns = json.loads(conditions_columns)
@@ -282,6 +285,10 @@ def main():
     else:
         raise ValueError("You must specify model_name_or_path or config_name")
     model.resize_token_embeddings(len(tokenizer))
+    if model_args.use_gpu:
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        print("Device: ", device)
+        model.to(device)
 
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
