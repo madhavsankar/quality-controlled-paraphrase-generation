@@ -137,11 +137,11 @@ def main():
 
     config = parse_args()
     print(config.train.run_name)
-    if config.train.run_name and config.train.run_name != config.train.output_dir:
-        import clearml
-        task = clearml.Task.init(project_name="tslm/tslm-gen", task_name=f"{config.train.run_name}", tags=[tag for tag in config.task.run_tags.replace(' ', '').split(',') if tag])    
-        task.set_resource_monitor_iteration_timeout(0)
-        parse_args()
+    # if config.train.run_name and config.train.run_name != config.train.output_dir:
+    #     import clearml
+    #     task = clearml.Task.init(project_name="tslm/tslm-gen", task_name=f"{config.train.run_name}", tags=[tag for tag in config.task.run_tags.replace(' ', '').split(',') if tag])    
+    #     task.set_resource_monitor_iteration_timeout(0)
+    #     parse_args()
 
     # Detecting last checkpoint.
     checkpoint = None
