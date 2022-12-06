@@ -3,6 +3,10 @@
 
 > Here we propose `QCPG++`, a quality-guided controlled paraphrase generation model that builds on top of [`QCPG`](https://github.com/IBM/quality-controlled-paraphrase-generation), that allows directly controlling the quality dimensions. We add more dimensions to the original model. Now we can control the morphological, phonological and syntactic diversity of the paraphrase while maximizing semantic similarity.
 
+## Trained Models
+
+[`qcpg++`](https://huggingface.co/madhavsankar/qcpg-mscoco-sbert-lr1e-4) (Trained on `data/mscoco`)
+
 ## Usage
 Use run notebook or run shell script to train the model on mscoco dataset.
 
