@@ -18,3 +18,4 @@ amrlib
 clearml
 karateclub
 zss
+faiss

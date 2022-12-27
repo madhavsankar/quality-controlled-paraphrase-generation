@@ -19,7 +19,7 @@ from itertools import chain
 import torch
 import numpy as np
 from sklearn.decomposition import PCA
-from scipy.spatial import distance
+import faiss
 import transformers
 from transformers import AutoModel, AutoTokenizer
 from sentence_transformers import SentenceTransformer
@@ -99,19 +99,19 @@ class DocumentSemanticDiversity(datasets.Metric):
             # TextDiversity configs
             'q': 1,
             'normalize': False,
-            'distance_fn': distance.cosine, 
+            'distance_fn': faiss.METRIC_INNER_PRODUCT, # used for cosine similarity 
             'dim_reducer': PCA,
             'remove_stopwords': False, 
-            'scale_dist': "invert", 
+            'scale_dist': None, 
             'power_reg': False, 
             'mean_adj': False,
             'verbose': False,
             # DocumentSemanticDiversity configs
             'MODEL_NAME': "princeton-nlp/sup-simcse-roberta-large", # "bert-large-nli-stsb-mean-tokens",
-            'use_gpu': True,
+            'use_cuda': True,
             'n_components': None
         }
-        self.device = torch.device('cuda' if self.config['use_gpu'] and torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda' if self.config['use_cuda'] and torch.cuda.is_available() else 'cpu')
         self.model = SentenceTransformer(self.config['MODEL_NAME'], device=self.device)
 
     def extract_features(self, corpus, return_ids=False):
@@ -134,14 +134,35 @@ class DocumentSemanticDiversity(datasets.Metric):
             return boe, corpus, ids, ids
         return boe, corpus
 
+    def similarity_search(self, query_features, corpus_features, distance_fn, postprocess_fn=None):
+
+        if postprocess_fn == "exp":
+            postprocess_fn = negative_exponentiation
+        elif postprocess_fn == "invert":
+            postprocess_fn = complement
+        else:
+            postprocess_fn = None
+
+        num_features, dims = corpus_features.shape
+        dims = int(dims)
+        if distance_fn == faiss.METRIC_INNER_PRODUCT:
+            faiss.normalize_L2(corpus_features) 
+            if len(query_features.shape) == 1:
+                query_features = np.expand_dims(query_features, 0)
+            faiss.normalize_L2(query_features) 
+
+        index = faiss.IndexFlat(dims, distance_fn) 
+        index.add(corpus_features)
+        D, I = index.search(query_features, num_features) 
+        D = postprocess_fn(D) if postprocess_fn is not None else D
+        return D[0]
+
     def calculate_similarity_vector(self, q_feat, c_feat):
 
-        z = np.array([self.config['distance_fn'](q_feat, f) for f in c_feat])
-        
-        if self.config['scale_dist'] == "exp":
-            z = np.exp(-z) 
-        elif self.config['scale_dist'] == "invert":
-            z = 1 - z
+        z = self.similarity_search(query_features=q_feat, 
+                              corpus_features=c_feat,
+                              distance_fn=self.config['distance_fn'], 
+                              postprocess_fn=self.config['scale_dist'])
 
         # remove some noise from the z similarities
         if self.config['power_reg']:
