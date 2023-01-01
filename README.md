@@ -5,7 +5,11 @@
 
 ## Trained Models
 
-[`qcpg++`](https://huggingface.co/madhavsankar/qcpg-mscoco-sbert-lr1e-4) (Trained on `data/mscoco`)
+[`qcpg++captions`](https://huggingface.co/madhavsankar/qcpg-mscoco-sbert-lr1e-4) (Trained on `data/mscoco`)
+
+[`qcpg++sentences`](https://huggingface.co/madhavsankar/qcpg-parabk2-sbert-lr1e-4) (Trained on `data/parabk2`)
+
+[`qp`](https://huggingface.co/madhavsankar/qp-mscoco-sbert-lr5e-5) (Trained on `data/mscoco`)
 
 ## Usage
 Use run notebook or run shell script to train the model on mscoco dataset.
@@ -32,7 +36,7 @@ python QCPG/evaluate.py \
 --dataset_generate_mode force_redownload --dataset_keep_in_memory \
 --conditions_columns '["semantic_sim", "lexical_div", "syntactic_div", "phonological_div", "morphological_div"]' \
 --overwrite_output_dir \
---dataset_map 'semantic_sim = 5 * round(bleurt_score * 100 / 5); lexical_div = 5 * round(set_diversity * 100 / 5); syntactic_div = 5 * round(syn_diversity * 100 / 5); phonological_div = 5 * round(phon_diversity * 100 / 5); morphological_div = 5 * round(morph_diversity * 100 / 5);' \
+--dataset_map 'semantic_sim = 5 * round(semantic_similarity * 100 / 5); lexical_div = 5 * round(set_diversity * 100 / 5); syntactic_div = 5 * round(syn_dep_diversity * 100 / 5); phonological_div = 5 * round(phon_diversity * 100 / 5); morphological_div = 5 * round(morph_diversity * 100 / 5);' \
 --train_file new_data/mscoco/train.csv.gz \
 --validation_file new_data/mscoco/validation.csv.gz \
 --learning_rate 1e-3 \
