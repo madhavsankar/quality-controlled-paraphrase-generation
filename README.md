@@ -11,6 +11,27 @@
 
 [`qp`](https://huggingface.co/madhavsankar/qp-mscoco-sbert-lr5e-5) (Trained on `data/mscoco`)
 
+## Model Usage
+```
+from transformers import pipeline
+
+class QualityControlPipeline:
+    def __init__(self):
+        self.pipe = pipeline('text2text-generation', model='madhavsankar/qcpg-parabk2-sbert-lr1e-4')
+        self.ranges = {'lex': [0, 100], 'syn': [0, 100], 'sem': [30, 100], 'pho': [0, 100], 'mor': [0, 90]}
+
+    def __call__(self, text, lexical, syntactic, semantic, morph, phon, **kwargs):
+        assert all([0 <= val <= 1 for val in [lexical, syntactic, semantic, morph, phon,]]), \
+                 f' control values must be between 0 and 1, got {lexical}, {syntactic}, {semantic}, {morph}, {phon}'
+        names = ['semantic_sim', 'lexical_div', 'syntactic_div', 'morphological_div', 'phonological_div']
+        control = [int(5 * round(val * 100 / 5)) for val in [semantic, lexical, syntactic, morph, phon]]
+        control ={name: max(min(val , self.ranges[name[:3]][1]), self.ranges[name[:3]][0]) for name, val in zip(names, control)}
+        control = [f'COND_{name.upper()}_{control[name]}' for name in names]
+        assert all(cond in self.pipe.tokenizer.additional_special_tokens for cond in control)
+        text = ' '.join(control) + ' ' + text if isinstance(text, str) else [' '.join(control) for t in text]
+        return self.pipe(text, **kwargs)
+```
+
 ## Usage
 Use run notebook or run shell script to train the model on mscoco dataset.
 
